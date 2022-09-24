@@ -28,6 +28,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", Landing)
 	r.HandleFunc("/new", NewEntry)
+	r.HandleFunc("/create", CreateEntry).Methods("POST")
 	r.HandleFunc("/view/{id}", UpdateEntry)
 	r.HandleFunc("/update/{id}", ViewEntry).Methods("POST")
 	http.Handle("/", r)
@@ -75,9 +76,40 @@ func NewEntry(w http.ResponseWriter, r *http.Request) {
 	tmpl.RenderPage("report.html", "templates/report.gohtml", &w, dropdownOpts.Types)
 }
 
+func CreateEntry(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm() // Need to call this or else we won't populate our fields
+
+	extractedValues := make(map[string]any)
+
+	// Quickly check over our values to ensure they're set and if not - set them
+	expectedPostValues := []string{"username", "issueType", "summary", "issue"}
+	for _, value := range expectedPostValues {
+		if extrValue, isOk := r.PostForm[value]; isOk {
+			extractedValues[value] = extrValue[0]
+		} else {
+			extractedValues[value] = "unset"
+		}
+	}
+
+	// Special edge case for our resolved check as we're dealing directly with a bool
+	alreadyResolvedIssue := false
+	if _, isOk := r.PostForm["resolved"]; isOk {
+		alreadyResolvedIssue = true
+	}
+
+	// Insert our data and fetch back our inserted ID.
+	var returnedId string
+	if err := dbConnection.QueryRow(context.Background(), "INSERT INTO incidentprone.reports(\"reporterName\", \"issueType\", \"issueSummary\", \"overallIssue\", resolved) VALUES ($1, $2, $3, $4, $5) RETURNING id",
+		extractedValues["username"], extractedValues["issueType"], extractedValues["summary"], extractedValues["issue"], alreadyResolvedIssue).Scan(&returnedId); err != nil {
+		log.Fatal(err)
+	}
+
+	// And then redirect our user to their report.
+	http.Redirect(w, r, fmt.Sprintf("/view/%s", returnedId), http.StatusPermanentRedirect)
+}
+
 func UpdateEntry(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(r)
-
 }
 
 func ViewEntry(w http.ResponseWriter, r *http.Request) {

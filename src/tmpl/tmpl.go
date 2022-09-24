@@ -14,9 +14,3 @@ func RenderPage(name string, path string, resp *http.ResponseWriter, data any) {
 		fmt.Println(err)
 	}
 }
-
-// func RenderPage(name string, template template.Template, resp *http.ResponseWriter) {
-// 	if err := template.Execute(*resp, nil); err != nil {
-// 		fmt.Println(err)
-// 	}
-// }
