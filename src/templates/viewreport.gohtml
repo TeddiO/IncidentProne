@@ -8,9 +8,11 @@
     <body>
         <h1>Incident Prone</h1>
         <h2>Viewing Report: {{ .PrimaryReport.Summary }}</h2>
-        <p>Content or something</p>
-
-
+        <p>Reported by: {{ .PrimaryReport.Reporter }}<br />
+            Created: {{ .PrimaryReport.Created }}<br />
+            Last Updated: {{ .PrimaryReport.LastUpdated }}</p>
+        <h3>Issue Description</h3>
+        <p>{{ .PrimaryReport.Full }}</p>
 
         <p><a href ="/">Return to home</a></p>
     </body>

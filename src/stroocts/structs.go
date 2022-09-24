@@ -14,6 +14,7 @@ type LandingReport struct {
 	Summary     string
 	Full        *string
 	Resolved    bool
+	Created     *time.Time
 	LastUpdated time.Time
 }
 

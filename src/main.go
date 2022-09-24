@@ -139,8 +139,8 @@ func ViewEntry(w http.ResponseWriter, r *http.Request) {
 
 	var initialReport stroocts.LandingReport
 
-	if err := dbConnection.QueryRow(context.Background(), "SELECT id::text, \"reporterName\", \"issueType\"::text, \"issueSummary\", \"overallIssue\", resolved, last_updated FROM incidentprone.reports WHERE id = $1;", vars["id"]).Scan(
-		&initialReport.Id, &initialReport.Reporter, &initialReport.IssueType, &initialReport.Summary, &initialReport.Full, &initialReport.Resolved, &initialReport.LastUpdated); err != nil {
+	if err := dbConnection.QueryRow(context.Background(), "SELECT id::text, \"reporterName\", \"issueType\"::text, \"issueSummary\", \"overallIssue\", resolved, last_updated, created FROM incidentprone.reports WHERE id = $1;", vars["id"]).Scan(
+		&initialReport.Id, &initialReport.Reporter, &initialReport.IssueType, &initialReport.Summary, &initialReport.Full, &initialReport.Resolved, &initialReport.LastUpdated, &initialReport.Created); err != nil {
 		fmt.Println(err)
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	}
