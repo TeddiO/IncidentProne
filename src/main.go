@@ -37,9 +37,8 @@ func main() {
 	r.HandleFunc("/", Landing)
 	r.HandleFunc("/new", NewEntry)
 	r.HandleFunc("/create", CreateEntry).Methods("POST")
-	r.HandleFunc("/view/{id}", UpdateEntry)
-	r.HandleFunc("/update/{id}", ViewEntry).Methods("POST")
-	// http.Handle("/", r)
+	r.HandleFunc("/view/{id}", ViewEntry)
+	r.HandleFunc("/update/{id}", UpdateEntry).Methods("POST")
 
 	log.Fatal(http.ListenAndServe("localhost:8080", r))
 }
