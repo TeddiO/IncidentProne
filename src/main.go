@@ -48,7 +48,7 @@ func main() {
 
 func Landing(w http.ResponseWriter, r *http.Request) {
 	// Query for all of our potential options
-	rows, err := dbConnection.Query(context.Background(), "SELECT id::text, \"reporterName\", \"issueType\"::text, \"issueSummary\", resolved, last_updated FROM incidentprone.reports;")
+	rows, err := dbConnection.Query(context.Background(), "SELECT id::text, \"reporterName\", \"reason\", \"issueSummary\", resolved, last_updated FROM incidentprone.reports JOIN incidentprone.\"reportTypes\" ON \"issueType\" = \"internalId\";")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -132,24 +132,26 @@ func CreateEntry(w http.ResponseWriter, r *http.Request) {
 func UpdateEntry(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
+	// Insert our sub message wqithout any real care for errors :')
 	dbConnection.Exec(context.Background(), "INSERT INTO incidentprone.sub_reports(username, message, referenced_issue) VALUES ($1, $2, $3)",
 		r.PostForm["username"][0], r.PostForm["issue"][0], r.PostForm["issueId"][0])
 
+	// And similar thing with if we're marking it as resolved.
 	if _, isOk := r.PostForm["resolved"]; isOk {
 		dbConnection.Exec(context.Background(), "UPDATE incidentprone.reports SET resolved = True WHERE id = $1;", r.PostForm["issueId"][0])
 	}
 
+	// Then to reload the page to show change, send them back to the page.
 	http.Redirect(w, r, fmt.Sprintf("/view/%s", r.PostForm["issueId"][0]), http.StatusTemporaryRedirect)
 }
 
 func ViewEntry(w http.ResponseWriter, r *http.Request) {
 	var reportEntry stroocts.SingleEntry
 	vars := mux.Vars(r)
-
 	var initialReport stroocts.LandingReport
 
 	// Grab our main report data. If we have an error for whatever reason, safely back out to our index
-	if err := dbConnection.QueryRow(context.Background(), "SELECT id::text, \"reporterName\", \"issueType\"::text, \"issueSummary\", \"overallIssue\", resolved, last_updated, created FROM incidentprone.reports WHERE id = $1;", vars["id"]).Scan(
+	if err := dbConnection.QueryRow(context.Background(), "SELECT id::text, \"reporterName\", reason, \"issueSummary\", \"overallIssue\", resolved, last_updated, created FROM incidentprone.reports JOIN incidentprone.\"reportTypes\" ON \"issueType\" = \"internalId\" WHERE id = $1;", vars["id"]).Scan(
 		&initialReport.Id, &initialReport.Reporter, &initialReport.IssueType, &initialReport.Summary, &initialReport.Full, &initialReport.Resolved, &initialReport.LastUpdated, &initialReport.Created); err != nil {
 		fmt.Println(err)
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
@@ -157,14 +159,15 @@ func ViewEntry(w http.ResponseWriter, r *http.Request) {
 
 	reportEntry.PrimaryReport = initialReport
 
+	// Then load up our sub messages said the incident.
 	rows, err := dbConnection.Query(context.Background(), "SELECT username, message, time FROM incidentprone.sub_reports WHERE referenced_issue = $1;", vars["id"])
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// Loop-de-loop out the values and cast them.
 	for rows.Next() {
 		values, err := rows.Values()
-
 		reportEntry.SubReports = append(reportEntry.SubReports, stroocts.ChildReports{Reporter: values[0].(string), Message: values[1].(string), Time: values[2].(time.Time)})
 
 		if err != nil {
@@ -172,5 +175,6 @@ func ViewEntry(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	// And render us out!
 	tmpl.RenderPage("viewreport.html", "templates/viewreport.gohtml", &w, reportEntry)
 }
