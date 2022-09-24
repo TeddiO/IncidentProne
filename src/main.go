@@ -41,7 +41,7 @@ func main() {
 	r.HandleFunc("/new", NewEntry)
 	r.HandleFunc("/create", CreateEntry).Methods("POST")
 	r.HandleFunc("/view/{id}", ViewEntry)
-	r.HandleFunc("/update/{id}", UpdateEntry).Methods("POST")
+	r.HandleFunc("/update", UpdateEntry).Methods("POST")
 
 	log.Fatal(http.ListenAndServe("localhost:8080", r))
 }
@@ -130,7 +130,16 @@ func CreateEntry(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdateEntry(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r)
+	r.ParseForm()
+
+	dbConnection.Exec(context.Background(), "INSERT INTO incidentprone.sub_reports(username, message, referenced_issue) VALUES ($1, $2, $3)",
+		r.PostForm["username"][0], r.PostForm["issue"][0], r.PostForm["issueId"][0])
+
+	if _, isOk := r.PostForm["resolved"]; isOk {
+		dbConnection.Exec(context.Background(), "UPDATE incidentprone.reports SET resolved = True WHERE id = $1;", r.PostForm["issueId"][0])
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/view/%s", r.PostForm["issueId"][0]), http.StatusTemporaryRedirect)
 }
 
 func ViewEntry(w http.ResponseWriter, r *http.Request) {
@@ -139,6 +148,7 @@ func ViewEntry(w http.ResponseWriter, r *http.Request) {
 
 	var initialReport stroocts.LandingReport
 
+	// Grab our main report data. If we have an error for whatever reason, safely back out to our index
 	if err := dbConnection.QueryRow(context.Background(), "SELECT id::text, \"reporterName\", \"issueType\"::text, \"issueSummary\", \"overallIssue\", resolved, last_updated, created FROM incidentprone.reports WHERE id = $1;", vars["id"]).Scan(
 		&initialReport.Id, &initialReport.Reporter, &initialReport.IssueType, &initialReport.Summary, &initialReport.Full, &initialReport.Resolved, &initialReport.LastUpdated, &initialReport.Created); err != nil {
 		fmt.Println(err)
@@ -161,8 +171,6 @@ func ViewEntry(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 	}
-
-	fmt.Println(reportEntry)
 
 	tmpl.RenderPage("viewreport.html", "templates/viewreport.gohtml", &w, reportEntry)
 }

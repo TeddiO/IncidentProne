@@ -12,6 +12,7 @@
         <table>
             <tr>
                 <th>ID</th>
+                <th>Priority</th>
                 <th>Summary</th>
                 <th>Last Update</th>
                 <th>Resolved?</th>
@@ -21,6 +22,7 @@
             {{range $id, $data := .Entries }}
                 <tr>
                     <td><a href="/view/{{$data.Id}}">{{$data.Id}}</a></td>
+                    <td>{{$data.IssueType}}</td>
                     <td>{{$data.Summary}}</td>
                     <td>{{$data.LastUpdated}}</td>
                     <td>{{$data.Resolved}}</td>
