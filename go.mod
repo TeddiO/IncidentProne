@@ -3,7 +3,10 @@ module github.com/TeddiO/IncidentProne
 go 1.19
 
 require (
+	github.com/gofrs/uuid v4.3.0+incompatible
+	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
+	github.com/jackc/pgx-gofrs-uuid v0.0.0-20220402203838-5fdaf7ddb8a2
 	github.com/jackc/pgx/v5 v5.0.0
 )
 

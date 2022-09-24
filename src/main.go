@@ -5,8 +5,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
+
+	"github.com/TeddiO/IncidentProne/src/stroocts"
 
 	"github.com/TeddiO/IncidentProne/src/tmpl"
+	pgxuuid "github.com/jackc/pgx-gofrs-uuid"
 
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v5"
@@ -22,6 +26,10 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
+	// Use pgxuuid to convert uuids into a string type
+	pgxuuid.Register(dbConnection.TypeMap())
+
 }
 
 func main() {
@@ -31,22 +39,34 @@ func main() {
 	r.HandleFunc("/create", CreateEntry).Methods("POST")
 	r.HandleFunc("/view/{id}", UpdateEntry)
 	r.HandleFunc("/update/{id}", ViewEntry).Methods("POST")
-	http.Handle("/", r)
+	// http.Handle("/", r)
 
 	log.Fatal(http.ListenAndServe("localhost:8080", r))
 }
 
 func Landing(w http.ResponseWriter, r *http.Request) {
-	tmpl.RenderPage("index.html", "templates/index.gohtml", &w, nil)
-}
+	// Query for all of our potential options
+	rows, err := dbConnection.Query(context.Background(), "SELECT id::text, \"reporterName\", \"issueType\"::text, \"issueSummary\", resolved, last_updated FROM incidentprone.reports;")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-type reportGrouping struct {
-	Types []reportType
-}
+	var indexData stroocts.LandingGrouping
 
-type reportType struct {
-	Id   int32
-	Text string
+	for rows.Next() {
+		values, err := rows.Values()
+
+		indexData.Entries = append(indexData.Entries, stroocts.LandingReport{Id: values[0].(string), Reporter: values[1].(string), IssueType: values[2].(string),
+			Summary: values[3].(string), Resolved: values[4].(bool), LastUpdated: values[5].(time.Time)})
+
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	fmt.Println(indexData)
+
+	tmpl.RenderPage("index.html", "templates/index.gohtml", &w, indexData)
 }
 
 func NewEntry(w http.ResponseWriter, r *http.Request) {
@@ -59,12 +79,12 @@ func NewEntry(w http.ResponseWriter, r *http.Request) {
 
 	// Generate our report grouping struct that we plan to dump all of our data in to.
 	// We're using a struct here in the event that we plan to maybe send down other data (although we currently don't)
-	var dropdownOpts = reportGrouping{}
+	var dropdownOpts = stroocts.ReportGrouping{}
 
 	// Iterate over our data and cast it to the types we want it to be.
 	for rows.Next() {
 		values, err := rows.Values()
-		dropdownOpts.Types = append(dropdownOpts.Types, reportType{Id: values[1].(int32), Text: values[0].(string)})
+		dropdownOpts.Types = append(dropdownOpts.Types, stroocts.ReportType{Id: values[1].(int32), Text: values[0].(string)})
 
 		if err != nil {
 			log.Fatal(err)

@@ -8,14 +8,26 @@
     <body>
         <h1>Incident Prone</h1>
         <table>
-            <th>
-                <td>ID</td>
-                <td>Name</td>
-                <td>First Reported</td>
-                <td>Last Update</td>
-                <td>Resolved?</td>
-                <td>Opened By</td>
-            </th>
+            <tr>
+                <th>ID</th>
+                <th>Summary</th>
+                <th>Last Update</th>
+                <th>Resolved?</th>
+                <th>Opened By</th>
+            </tr>
+            <tbody>
+            {{range $id, $data := .Entries }}
+                <tr>
+                    <td>{{$data.Id}}</td>
+                    <td>{{$data.Summary}}</td>
+                    <td>{{$data.LastUpdated}}</td>
+                    <td>{{$data.Resolved}}</td>
+                    <td>{{$data.Reporter}}</td>
+                </tr>
+            {{end}}
+            </tbody>
+            
+
         </table>
     </body>
 </html>
