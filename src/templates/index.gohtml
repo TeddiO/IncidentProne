@@ -19,7 +19,7 @@
             <tbody>
             {{range $id, $data := .Entries }}
                 <tr>
-                    <td>{{$data.Id}}</td>
+                    <td><a href="/view/{{$data.Id}}">{{$data.Id}}</a></td>
                     <td>{{$data.Summary}}</td>
                     <td>{{$data.LastUpdated}}</td>
                     <td>{{$data.Resolved}}</td>

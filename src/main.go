@@ -17,6 +17,7 @@ import (
 )
 
 var (
+	// Not the cleanest way of doing this, but for a PoC it's good enough!
 	dbConnection *pgx.Conn
 )
 
@@ -34,6 +35,8 @@ func init() {
 
 func main() {
 	r := mux.NewRouter()
+
+	// Register some basic routes
 	r.HandleFunc("/", Landing)
 	r.HandleFunc("/new", NewEntry)
 	r.HandleFunc("/create", CreateEntry).Methods("POST")
@@ -63,8 +66,7 @@ func Landing(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fmt.Println(indexData)
-
+	// Render our page with all of our entries on them.
 	tmpl.RenderPage("index.html", "templates/index.gohtml", &w, indexData)
 }
 
@@ -132,5 +134,20 @@ func UpdateEntry(w http.ResponseWriter, r *http.Request) {
 }
 
 func ViewEntry(w http.ResponseWriter, r *http.Request) {
-	tmpl.RenderPage("viewreport.html", "templates/viewreport.gohtml", &w, nil)
+	var reportEntry stroocts.SingleEntry
+	vars := mux.Vars(r)
+
+	var initialReport stroocts.LandingReport
+
+	if err := dbConnection.QueryRow(context.Background(), "SELECT id::text, \"reporterName\", \"issueType\"::text, \"issueSummary\", \"overallIssue\", resolved, last_updated FROM incidentprone.reports WHERE id = $1;", vars["id"]).Scan(
+		&initialReport.Id, &initialReport.Reporter, &initialReport.IssueType, &initialReport.Summary, &initialReport.Full, &initialReport.Resolved, &initialReport.LastUpdated); err != nil {
+		fmt.Println(err)
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+	}
+
+	reportEntry.PrimaryReport = initialReport
+
+	fmt.Println(initialReport)
+
+	tmpl.RenderPage("viewreport.html", "templates/viewreport.gohtml", &w, reportEntry)
 }

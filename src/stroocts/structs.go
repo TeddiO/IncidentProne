@@ -12,6 +12,7 @@ type LandingReport struct {
 	Reporter    string
 	IssueType   string
 	Summary     string
+	Full        *string
 	Resolved    bool
 	LastUpdated time.Time
 }
@@ -24,4 +25,13 @@ type ReportGrouping struct {
 type ReportType struct {
 	Id   int32
 	Text string
+}
+
+// Structs for individual reports
+type SingleEntry struct {
+	PrimaryReport LandingReport
+	SubReports    []ChildReports
+}
+
+type ChildReports struct {
 }
