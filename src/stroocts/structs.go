@@ -35,4 +35,7 @@ type SingleEntry struct {
 }
 
 type ChildReports struct {
+	Reporter string
+	Message  string
+	Time     time.Time
 }

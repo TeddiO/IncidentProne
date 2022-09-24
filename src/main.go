@@ -147,7 +147,22 @@ func ViewEntry(w http.ResponseWriter, r *http.Request) {
 
 	reportEntry.PrimaryReport = initialReport
 
-	fmt.Println(initialReport)
+	rows, err := dbConnection.Query(context.Background(), "SELECT username, message, time FROM incidentprone.sub_reports WHERE referenced_issue = $1;", vars["id"])
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for rows.Next() {
+		values, err := rows.Values()
+
+		reportEntry.SubReports = append(reportEntry.SubReports, stroocts.ChildReports{Reporter: values[0].(string), Message: values[1].(string), Time: values[2].(time.Time)})
+
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	fmt.Println(reportEntry)
 
 	tmpl.RenderPage("viewreport.html", "templates/viewreport.gohtml", &w, reportEntry)
 }
