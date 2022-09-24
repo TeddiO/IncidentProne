@@ -33,5 +33,5 @@ func UpdateEntry(w http.ResponseWriter, r *http.Request) {
 }
 
 func ViewEntry(w http.ResponseWriter, r *http.Request) {
-
+	tmpl.RenderPage("viewreport.html", "templates/viewreport.gohtml", &w)
 }
