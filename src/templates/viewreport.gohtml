@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
     <head>
-    <title>Landing</title>
+    <title>Viewing {{ .PrimaryReport.Summary }}</title>
         <meta name="description" content="Landing page for Incident Prone">
     </head>
 
@@ -12,7 +12,7 @@
         <p>Reported by: {{ .PrimaryReport.Reporter }}<br />
             Priority: {{ .PrimaryReport.IssueType }}<br />
             Created: {{ .PrimaryReport.Created }}<br />
-            Last Updated: {{ .PrimaryReport.LastUpdated }}<br />
+            Last updated: {{ .PrimaryReport.LastUpdated }}<br />
             Resolved: {{ .PrimaryReport.Resolved }}</p>
         <h3>Issue Description</h3>
         <pre style="white-space: pre-wrap;">{{ .PrimaryReport.Full }}</pre>
