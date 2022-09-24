@@ -6,11 +6,11 @@ import (
 	"net/http"
 )
 
-func RenderPage(name string, path string, resp *http.ResponseWriter) {
+func RenderPage(name string, path string, resp *http.ResponseWriter, data any) {
 	template.New(name)
 	returnedTemplate, _ := template.ParseFiles(path)
 
-	if err := returnedTemplate.Execute(*resp, nil); err != nil {
+	if err := returnedTemplate.Execute(*resp, data); err != nil {
 		fmt.Println(err)
 	}
 }
