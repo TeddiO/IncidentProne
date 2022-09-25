@@ -16,6 +16,7 @@ type LandingReport struct {
 	Resolved    bool
 	Created     *time.Time
 	LastUpdated time.Time
+	TotalTime   *time.Duration
 }
 
 // Structs for selecting our reporting types

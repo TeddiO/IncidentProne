@@ -15,6 +15,9 @@
             Created: {{ .PrimaryReport.Created }}<br />
             Last updated: {{ .PrimaryReport.LastUpdated }}<br />
             Resolved: {{ .PrimaryReport.Resolved }}</p>
+            {{if .PrimaryReport.TotalTime }}
+            Total time taken for resolution: {{ .PrimaryReport.TotalTime }}
+            {{end}}
         <h3>Issue Description</h3>
         <pre style="white-space: pre-wrap;">{{ .PrimaryReport.Full }}</pre>
 

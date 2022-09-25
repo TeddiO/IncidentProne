@@ -170,6 +170,11 @@ func ViewEntry(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 	}
 
+	if initialReport.Resolved {
+		timeToResolve := initialReport.LastUpdated.Sub(*initialReport.Created).Round(time.Second)
+		initialReport.TotalTime = &timeToResolve
+	}
+
 	reportEntry.PrimaryReport = initialReport
 
 	// Then load up our sub messages said the incident.
