@@ -3,9 +3,10 @@
     <head>
     <title>Report an issue!</title>
         <meta name="description" content="Landing page for Incident Prone">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     </head>
 
-    <body>
+    <body style="margin:10px;">
         <h1>Incident Prone</h1>
         <h2>Report an Incident</h2>
         <form action ="/create" method="POST">
@@ -28,7 +29,7 @@
             <div>
                 <label>What's the issue?<span class="tooltip-element" tooltip="Describe the incident. What's blown up today?"></span></label>
                 <div>
-                    <textarea name="issue" placeholder="Describe the incident. What's blown up today?"  title="Describe the incident. What's blown up today?" required="required" aria-required="true"></textarea>
+                    <textarea name="issue" style="height:400px;width:500px;" placeholder="Describe the incident. What's blown up today?"  title="Describe the incident. What's blown up today?" required="required" aria-required="true"></textarea>
                 </div>
             </div>
             <div>
