@@ -19,16 +19,20 @@
         <pre style="white-space: pre-wrap;">{{ .PrimaryReport.Full }}</pre>
 
         <p><a href ="/">Return to home</a></p>
-
+        <div class="list-group">
         {{range $id, $data := .SubReports }}
-        <div>
-            <p>{{$data.Reporter}} ({{$data.Time}})</p>
-            <p>{{$data.Message}}</p>
+        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{$data.Reporter}}</h5>
+            </div>
+            <p class="mb-1">{{$data.Message}}</p>
+            <small>({{$data.Time}})</small>
+        </a>
+            {{end}}
         </div>
-        {{end}}
 
         {{ if not .PrimaryReport.Resolved }}
-        <h3>Update Issue</h3>
+        <h3 style="padding-top:20px;">Update Issue</h3>
         <form action ="/update" method="POST">
             <div>
                 <label>Name:<span class="tooltip-element" tooltip="Your name, as in the person reporting this!"></span></label>
