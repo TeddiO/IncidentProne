@@ -70,7 +70,7 @@ func Landing(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Render our page with all of our entries on them.
-	tmpl.RenderPage("index.html", "templates/index.gohtml", &w, indexData)
+	tmpl.RenderPage("index.gohtml", &w, indexData)
 }
 
 func NewEntry(w http.ResponseWriter, r *http.Request) {
@@ -97,7 +97,7 @@ func NewEntry(w http.ResponseWriter, r *http.Request) {
 
 	// Render our page and pass through our array of Types. Normally we'd actually pass the parent struct but
 	// as of current we only have our array of Types we we'll just pass that instead.
-	tmpl.RenderPage("report.html", "templates/report.gohtml", &w, dropdownOpts.Types)
+	tmpl.RenderPage("report.gohtml", &w, dropdownOpts.Types)
 }
 
 func CreateEntry(w http.ResponseWriter, r *http.Request) {
@@ -179,5 +179,5 @@ func ViewEntry(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// And render us out!
-	tmpl.RenderPage("viewreport.html", "templates/viewreport.gohtml", &w, reportEntry)
+	tmpl.RenderPage("viewreport.gohtml", &w, reportEntry)
 }
