@@ -25,3 +25,5 @@ And then finally.
 ```bash 
 docker-compose -f ./docker-compose.yml up -d --force-recreate
 ```
+
+The application should be available on `localhost:8080` after a few moments!
