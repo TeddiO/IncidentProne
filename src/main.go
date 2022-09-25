@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/TeddiO/IncidentProne/src/stroocts"
@@ -22,8 +23,10 @@ var (
 )
 
 func init() {
+	dbHostname := os.Getenv("DB_HOSTNAME")
+
 	var err error
-	dbConnection, err = pgx.Connect(context.Background(), "postgres://postgres:test@localhost:5432/incidentprone")
+	dbConnection, err = pgx.Connect(context.Background(), fmt.Sprintf("postgres://postgres:test@%s:5432/incidentprone", dbHostname))
 	if err != nil {
 		panic(err)
 	}
