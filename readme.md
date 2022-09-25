@@ -13,7 +13,7 @@ Any and all assets are actually baked in to the executable (totalling 15MB in to
 You'll want to fire up the initial compose file to fetch postgres
 
 ```bash 
-docker-compose -f .\docker-compose.yml up -d
+docker-compose -f ./docker-compose.yml up -d
 ```
 
 Then execute the database-setup.sh file if you haven't got any data in the database
@@ -23,5 +23,5 @@ Then execute the database-setup.sh file if you haven't got any data in the datab
 
 And then finally.
 ```bash 
-docker-compose -f .\docker-compose.yml up -d --force-recreate
+docker-compose -f ./docker-compose.yml up -d --force-recreate
 ```
