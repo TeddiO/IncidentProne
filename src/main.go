@@ -11,7 +11,6 @@ import (
 	"github.com/TeddiO/IncidentProne/src/stroocts"
 
 	"github.com/TeddiO/IncidentProne/src/tmpl"
-	pgxuuid "github.com/jackc/pgx-gofrs-uuid"
 
 	"github.com/gorilla/mux"
 	"github.com/jackc/pgx/v5"
@@ -31,9 +30,6 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-
-	// Use pgxuuid to convert uuids into a string type
-	pgxuuid.Register(dbConnection.TypeMap())
 	fmt.Println("Booted all database settings!")
 
 }
