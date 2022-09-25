@@ -23,6 +23,7 @@ var (
 )
 
 func init() {
+	fmt.Println("Booting initial database settings...")
 	dbHostname := os.Getenv("DB_HOSTNAME")
 
 	var err error
@@ -33,20 +34,26 @@ func init() {
 
 	// Use pgxuuid to convert uuids into a string type
 	pgxuuid.Register(dbConnection.TypeMap())
+	fmt.Println("Booted all database settings!")
 
 }
 
 func main() {
+	fmt.Println("registering router...")
 	r := mux.NewRouter()
 
 	// Register some basic routes
+	fmt.Println("Creating routes...")
 	r.HandleFunc("/", Landing)
 	r.HandleFunc("/new", NewEntry)
 	r.HandleFunc("/create", CreateEntry).Methods("POST")
 	r.HandleFunc("/view/{id}", ViewEntry)
 	r.HandleFunc("/update", UpdateEntry).Methods("POST")
 
-	log.Fatal(http.ListenAndServe("localhost:8080", r))
+	fmt.Println("Booting server")
+	broadcastHost := os.Getenv("APP_HOSTNAME")
+	broadcastPort := os.Getenv("APP_PORT")
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", broadcastHost, broadcastPort), r))
 }
 
 func Landing(w http.ResponseWriter, r *http.Request) {
