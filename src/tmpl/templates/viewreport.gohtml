@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+    <head>
+    <title>Viewing {{ .PrimaryReport.Summary }}</title>
+        <meta name="description" content="Landing page for Incident Prone">
+    </head>
+
+    <body>
+        <h1>Incident Prone</h1>
+        <p><a href ="/">Return to home</a></p>
+        <h2>Viewing Report: {{ .PrimaryReport.Summary }}</h2>
+        <p>Reported by: {{ .PrimaryReport.Reporter }}<br />
+            Priority: {{ .PrimaryReport.IssueType }}<br />
+            Created: {{ .PrimaryReport.Created }}<br />
+            Last updated: {{ .PrimaryReport.LastUpdated }}<br />
+            Resolved: {{ .PrimaryReport.Resolved }}</p>
+        <h3>Issue Description</h3>
+        <pre style="white-space: pre-wrap;">{{ .PrimaryReport.Full }}</pre>
+
+        <p><a href ="/">Return to home</a></p>
+
+        {{range $id, $data := .SubReports }}
+        <div>
+            <p>{{$data.Reporter}} ({{$data.Time}})</p>
+            <p>{{$data.Message}}</p>
+        </div>
+        {{end}}
+
+        {{ if not .PrimaryReport.Resolved }}
+        <h3>Update Issue</h3>
+        <form action ="/update" method="POST">
+            <div>
+                <label>Name:<span class="tooltip-element" tooltip="Your name, as in the person reporting this!"></span></label>
+                <input type="text" placeholder="Your name, as in the person reporting this!" required="required" class="form-control" name="username" title="Your name, as in the person reporting this!">
+            </div>
+            <div>
+                <label>Message:<span class="tooltip-element" tooltip=""></span></label>
+                <div>
+                    <textarea name="issue" placeholder="What's the update?"  title="What's the update?" required="required" aria-required="true"></textarea>
+                </div>
+            </div>
+
+            
+            <div>
+                <label>Resolve Issue</label>
+                <div class="checkbox-group">
+                    <input name="resolved" value="resolved" type="checkbox">
+                    <label>Resolved?</label>
+                </div>
+            </div>
+            <input type="hidden" name="issueId" value="{{ .PrimaryReport.Id }}">
+            <button type="submit">Submit</button>
+            {{ else }}
+            <h3>Issue has been marked as resolved.</h3>
+            {{ end }}
+            <p><a href ="/">Return to home</a></p>
+    </form>
+
+
+    </body>
+</html>

@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+    <head>
+    <title>Landing</title>
+        <meta name="description" content="Landing page for Incident Prone">
+    </head>
+
+    <body>
+        <h1>Incident Prone</h1>
+        <p><a href ="/new">Report an issue</a></p>
+        <h2>All incidents</h2>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Priority</th>
+                <th>Summary</th>
+                <th>Last Update</th>
+                <th>Resolved?</th>
+                <th>Opened By</th>
+            </tr>
+            <tbody>
+            {{range $id, $data := .Entries }}
+                <tr>
+                    <td><a href="/view/{{$data.Id}}">{{$data.Id}}</a></td>
+                    <td>{{$data.IssueType}}</td>
+                    <td>{{$data.Summary}}</td>
+                    <td>{{$data.LastUpdated}}</td>
+                    <td>{{$data.Resolved}}</td>
+                    <td>{{$data.Reporter}}</td>
+                </tr>
+            {{end}}
+            </tbody>
+        </table>
+    </body>
+</html>
