@@ -146,6 +146,9 @@ func UpdateEntry(w http.ResponseWriter, r *http.Request) {
 	dbConnection.Exec(context.Background(), "INSERT INTO incidentprone.sub_reports(username, message, referenced_issue) VALUES ($1, $2, $3)",
 		r.PostForm["username"][0], r.PostForm["issue"][0], r.PostForm["issueId"][0])
 
+	// And update the last updated field to ensure we can see when something was last updated!
+	dbConnection.Exec(context.Background(), "UPDATE incidentprone.reports SET last_updated = CURRENT_TIMESTAMP WHERE id = $1;", r.PostForm["issueId"][0])
+
 	// And similar thing with if we're marking it as resolved.
 	if _, isOk := r.PostForm["resolved"]; isOk {
 		dbConnection.Exec(context.Background(), "UPDATE incidentprone.reports SET resolved = True WHERE id = $1;", r.PostForm["issueId"][0])
