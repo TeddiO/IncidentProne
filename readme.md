@@ -1,5 +1,5 @@
 # IncidentProne
-A small ISMS / ITIL style system designed for explicitly tracking and handling incidents.
+A small ISMS / ITIL style system designed for explicitly tracking and handling incidents (PoC for a Hackathon).
 
 While we have Jira, it's very easy for incidents to get lost in there alongside that not everyone has a Jira account! IncidentProne is a proof of concept system that would allow anyone with the appropriate access (which is currently missing 😂) to log in and report / view / resolve incidents. Additionally if we did want this data replicated to a system like Jira, this is easily implemented and tickets could be raised based on priority. 
 
