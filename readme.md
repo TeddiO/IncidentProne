@@ -7,7 +7,7 @@ Also missing (due to time constraints) would be straightforward reporting of how
 
 ## Tech used
 Application is powered by Go which is backed by a Postgres database. We use docker to simplify setup and running the example for presentation purposes.
-Any and all assets are actually baked in to the executable (totalling 15MB in total) and could be ran on any system without any requirements of any other dependencies. 
+Any and all assets are actually baked in to the executable (15MB in total) and could be ran on any system without any requirements of any other dependencies. 
 
 ### Setup
 You'll want to fire up the initial compose file to fetch postgres
